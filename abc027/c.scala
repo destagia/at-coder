@@ -1,8 +1,8 @@
 object Main {
 
-  sealed trait Arrow { def reverse: Arrow }
-  case object Left extends Arrow { val reverse = Right }
-  case object Right extends Arrow { val reverse = Left }
+  sealed trait Arrow { def reverse: Arrow ; def value(x: Long): Long }
+  case object Left extends Arrow { val reverse = Right ; def value(x: Long) = x * 2}
+  case object Right extends Arrow { val reverse = Left ; def value(x: Long) = x * 2 + 1}
 
   sealed trait Turn { def arrow: Arrow }
   case class Takahashi(arrow: Arrow) extends Turn
@@ -22,13 +22,8 @@ object Main {
     catch { case e: NumberFormatException => println("Aoki") }
   }
 
-  def next(arrow: Arrow, num: Long): Long = arrow match {
-    case Left => num * 2
-    case Right => num * 2 + 1
-  }
-
   def simulate(N: Long, turn: Turn, nextTurn: Turn, x: Long = 1): Turn = {
-    val y = next(turn.arrow, x)
+    val y = turn.arrow.value(x)
     if (y > N) turn
     else       simulate(N, nextTurn, turn, y)
   }
